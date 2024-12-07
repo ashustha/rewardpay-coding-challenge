@@ -4,6 +4,7 @@ import {
   calculateRevenue,
   calculateExpenses,
   calculateGrossProfitMargin,
+  calculateNetProfitMargin,
 } from './utils';
 
 describe('formatCurrency', () => {
@@ -401,5 +402,47 @@ describe('calculateGrossProfitMargin', () => {
     const result = calculateGrossProfitMargin(accounts, revenue);
 
     expect(result).toBe(0); // Gross profit margin should be 0 if revenue is 0
+  });
+});
+
+describe('calculateNetProfitMargin', () => {
+  it('should calculate the net profit margin correctly', () => {
+    const revenue = 1000;
+    const expenses = 400;
+    const result = calculateNetProfitMargin(revenue, expenses);
+
+    expect(result).toBe(60); // (1000 - 400) / 1000 * 100 = 60
+  });
+
+  it('should return 0 if revenue is 0', () => {
+    const revenue = 0;
+    const expenses = 400;
+    const result = calculateNetProfitMargin(revenue, expenses);
+
+    expect(result).toBe(0); // When revenue is 0, the result should be 0
+  });
+
+  it('should return 100 if expenses are 0', () => {
+    const revenue = 1000;
+    const expenses = 0;
+    const result = calculateNetProfitMargin(revenue, expenses);
+
+    expect(result).toBe(100); // (1000 - 0) / 1000 * 100 = 100
+  });
+
+  it('should return a negative value if expenses are greater than revenue', () => {
+    const revenue = 1000;
+    const expenses = 1500;
+    const result = calculateNetProfitMargin(revenue, expenses);
+
+    expect(result).toBe(-50); // (1000 - 1500) / 1000 * 100 = -50
+  });
+
+  it('should handle negative expenses correctly', () => {
+    const revenue = 1000;
+    const expenses = -200;
+    const result = calculateNetProfitMargin(revenue, expenses);
+
+    expect(result).toBe(120); // (1000 - (-200)) / 1000 * 100 = 120
   });
 });
