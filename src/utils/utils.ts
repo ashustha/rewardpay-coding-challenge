@@ -46,3 +46,46 @@ export const calculateNetProfitMargin = (
   if (revenue === 0) return 0;
   return ((revenue - expenses) / revenue) * 100;
 };
+
+// Function to calculate working capital ratio
+export const calculateWorkingCapitalRatio = (data: Account[]): number => {
+  // Calculate assets
+  const assets = data
+    .filter((account) => account.account_category === 'assets')
+    .filter((account) =>
+      ['current', 'bank', 'current_accounts_receivable'].includes(
+        account.account_type
+      )
+    )
+    .reduce((acc, account) => {
+      if (account.value_type === 'debit') {
+        return acc + account.total_value;
+      } else if (account.value_type === 'credit') {
+        return acc - account.total_value;
+      }
+      return acc;
+    }, 0);
+
+  // Calculate liabilities
+  const liabilities = data
+    .filter((account) => account.account_category === 'liability')
+    .filter((account) =>
+      ['current', 'current_accounts_payable'].includes(account.account_type)
+    )
+    .reduce((acc, account) => {
+      if (account.value_type === 'credit') {
+        return acc + account.total_value;
+      } else if (account.value_type === 'debit') {
+        return acc - account.total_value;
+      }
+      return acc;
+    }, 0);
+
+  // Prevent division by zero
+  if (liabilities === 0) {
+    return assets === 0 ? NaN : Infinity;
+  }
+
+  // Return the working capital ratio as a percentage
+  return (assets / liabilities) * 100;
+};

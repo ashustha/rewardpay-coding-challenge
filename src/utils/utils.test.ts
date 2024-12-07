@@ -5,6 +5,7 @@ import {
   calculateExpenses,
   calculateGrossProfitMargin,
   calculateNetProfitMargin,
+  calculateWorkingCapitalRatio,
 } from './utils';
 
 describe('formatCurrency', () => {
@@ -444,5 +445,67 @@ describe('calculateNetProfitMargin', () => {
     const result = calculateNetProfitMargin(revenue, expenses);
 
     expect(result).toBe(120); // (1000 - (-200)) / 1000 * 100 = 120
+  });
+});
+
+describe('calculateWorkingCapitalRatio', () => {
+  it('should return correct working capital ratio', () => {
+    const accounts: Account[] = [
+      {
+        account_category: 'assets',
+        account_code: '001',
+        account_currency: 'USD',
+        account_identifier: 'A001',
+        account_status: 'active',
+        value_type: 'debit',
+        account_type_bank: 'bank',
+        system_account: 'system1',
+        account_name: 'Cash',
+        account_type: 'current',
+        total_value: 5000,
+      },
+      {
+        account_category: 'assets',
+        account_code: '002',
+        account_currency: 'USD',
+        account_identifier: 'A002',
+        account_status: 'active',
+        value_type: 'credit',
+        account_type_bank: 'bank',
+        system_account: 'system1',
+        account_name: 'Bank',
+        account_type: 'bank',
+        total_value: 1000,
+      },
+      {
+        account_category: 'liability',
+        account_code: '003',
+        account_currency: 'USD',
+        account_identifier: 'L001',
+        account_status: 'active',
+        value_type: 'credit',
+        account_type_bank: 'bank',
+        system_account: 'system2',
+        account_name: 'Accounts Payable',
+        account_type: 'current',
+        total_value: 2000,
+      },
+      {
+        account_category: 'liability',
+        account_code: '004',
+        account_currency: 'USD',
+        account_identifier: 'L002',
+        account_status: 'active',
+        value_type: 'debit',
+        account_type_bank: 'bank',
+        system_account: 'system2',
+        account_name: 'Accounts Receivable',
+        account_type: 'current_accounts_payable',
+        total_value: 500,
+      },
+    ];
+
+    const result = calculateWorkingCapitalRatio(accounts);
+    expect(result).toBeCloseTo(266.67, 2); // Corrected expected result: (4000 / 1500) * 100 = 266.67%
   });
 });
