@@ -1,5 +1,10 @@
 import { Account } from '../types/types';
-import { formatCurrency, calculateRevenue, calculateExpenses } from './utils';
+import {
+  formatCurrency,
+  calculateRevenue,
+  calculateExpenses,
+  calculateGrossProfitMargin,
+} from './utils';
 
 describe('formatCurrency', () => {
   it('should format a number as currency in the default locale', () => {
@@ -291,5 +296,110 @@ describe('calculateExpenses', () => {
 
     const result = calculateExpenses(accounts);
     expect(result).toBe(0); // Expected result: no data, so return 0
+  });
+});
+
+describe('calculateGrossProfitMargin', () => {
+  it('should calculate the gross profit margin correctly', () => {
+    const accounts = [
+      {
+        account_category: 'revenue',
+        account_code: '200',
+        account_currency: 'AUD',
+        account_identifier: 'e2bacdc6-2006-43c2-a5da-3c0e5f43b452',
+        account_status: 'ACTIVE',
+        value_type: 'debit',
+        account_name: 'Sales',
+        account_type: 'sales',
+        account_type_bank: '',
+        system_account: '',
+        total_value: 100,
+      },
+      {
+        account_category: 'expense',
+        account_code: '400',
+        account_currency: 'AUD',
+        account_identifier: 'd392fe47-c99d-499e-a200-46709dd6b6e7',
+        account_name: 'Advertising',
+        account_status: 'ACTIVE',
+        system_account: '',
+        value_type: 'debit',
+        account_type_bank: '',
+        total_value: 300,
+        account_type: 'overheads',
+      },
+      {
+        account_category: 'revenue',
+        account_code: '300',
+        account_currency: 'AUD',
+        account_identifier: 'a38453a7-69f0-4a90-b25d-5d32534df64b',
+        account_status: 'ACTIVE',
+        value_type: 'debit',
+        account_name: 'Sales',
+        account_type: 'sales',
+        account_type_bank: '',
+        system_account: '',
+        total_value: 400,
+      },
+    ];
+
+    const revenue = 800; // Sum of all 'revenue' accounts
+    const result = calculateGrossProfitMargin(accounts, revenue);
+
+    expect(result).toBeCloseTo(62.5, 2);
+  });
+
+  it('should return 0 if no sales accounts exist', () => {
+    const accounts = [
+      {
+        account_category: 'expense',
+        account_code: '400',
+        account_currency: 'AUD',
+        account_identifier: 'd392fe47-c99d-499e-a200-46709dd6b6e7',
+        account_name: 'Advertising',
+        account_status: 'ACTIVE',
+        system_account: '',
+        value_type: 'debit',
+        account_type_bank: '',
+        total_value: 1830.18,
+        account_type: 'overheads',
+      },
+    ];
+
+    const revenue = 1830.18;
+    const result = calculateGrossProfitMargin(accounts, revenue);
+
+    expect(result).toBe(0); // No sales account, so the result should be 0
+  });
+
+  it('should handle an empty account list', () => {
+    const accounts: Account[] = []; // Empty list
+    const revenue = 0;
+
+    const result = calculateGrossProfitMargin(accounts, revenue);
+    expect(result).toBe(0); // No data, so return 0
+  });
+
+  it('should return 0 if revenue is 0', () => {
+    const accounts = [
+      {
+        account_category: 'revenue',
+        account_code: '200',
+        account_currency: 'AUD',
+        account_identifier: 'e2bacdc6-2006-43c2-a5da-3c0e5f43b452',
+        account_status: 'ACTIVE',
+        value_type: 'credit',
+        account_name: 'Sales',
+        account_type: 'sales',
+        account_type_bank: '',
+        system_account: '',
+        total_value: 32431.0,
+      },
+    ];
+
+    const revenue = 0; // Setting revenue to 0
+    const result = calculateGrossProfitMargin(accounts, revenue);
+
+    expect(result).toBe(0); // Gross profit margin should be 0 if revenue is 0
   });
 });
