@@ -18,3 +18,22 @@ export const calculateExpenses = (data: Account[]): number => {
     .filter((account) => account.account_category === 'expense')
     .reduce((acc, account) => acc + account.total_value, 0);
 };
+
+// Function to calculate gross profit margin
+export const calculateGrossProfitMargin = (
+  data: Account[],
+  revenue: number
+): number => {
+  if (revenue === 0) return 0; // Return 0 if revenue is 0
+
+  const sales = data
+    .filter(
+      (account) =>
+        account.account_type === 'sales' && account.value_type === 'debit'
+    )
+    .reduce((acc, account) => acc + account.total_value, 0);
+
+  if (sales === 0) return 0; // Return 0 if sales are 0
+
+  return (sales / revenue) * 100;
+};
