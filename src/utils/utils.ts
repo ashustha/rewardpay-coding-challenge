@@ -11,3 +11,10 @@ export const calculateRevenue = (data: Account[]): number => {
     .filter((account) => account.account_category === 'revenue')
     .reduce((acc, account) => acc + account.total_value, 0);
 };
+
+// Function to calculate expenses
+export const calculateExpenses = (data: Account[]): number => {
+  return data
+    .filter((account) => account.account_category === 'expense')
+    .reduce((acc, account) => acc + account.total_value, 0);
+};
