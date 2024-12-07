@@ -37,3 +37,12 @@ export const calculateGrossProfitMargin = (
 
   return (sales / revenue) * 100;
 };
+
+// Function to calculate net profit margin
+export const calculateNetProfitMargin = (
+  revenue: number,
+  expenses: number
+): number => {
+  if (revenue === 0) return 0;
+  return ((revenue - expenses) / revenue) * 100;
+};
