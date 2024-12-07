@@ -2,7 +2,7 @@ import { Account } from '../types/types';
 
 // Function to format numbers as currency
 export const formatCurrency = (value: number): string => {
-  return `$${value.toLocaleString()}`;
+  return `$${Math.floor(value).toLocaleString()}`;
 };
 
 // Function to calculate revenue
